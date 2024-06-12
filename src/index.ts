@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 
 type Bindings = {
   [key in keyof CloudflareBindings]: CloudflareBindings[key]
@@ -16,11 +17,11 @@ app.post('/save', async (c) => {
   // Check if downloadUrl is a valid URL
   const downloadUrlString = body['remote_url'] as string;
   if (!downloadUrlString) {
-    return c.text('Invalid URL')
+    throw new HTTPException(400, { message: 'Missing URL' })
   }
 
   if (!downloadUrlString.startsWith('http') || !downloadUrlString.includes('://')) {
-    return c.text('Invalid URL')
+    throw new HTTPException(400, { message: 'Not URL' })
   }
 
   // Check filename
